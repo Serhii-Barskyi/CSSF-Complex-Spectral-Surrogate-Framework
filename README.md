@@ -289,6 +289,8 @@ This project is licensed under the MIT License — see the LICENSE file for deta
 Data Scientist (Spectral Methods) / Quantum Optimization Specialist
 |ψ⟩⊗|φ⟩ QAOA | QUBO | Spectral Analysis | Fourier-based ML |⇅〉 Qiskit | Django REST | Energy, Logistics, Industrial AIoT | Fourier Neural Operators
 
+https://preply.com/en/tutor/7756455
+
 https://www.linkedin.com/in/serhii-barskyi/
 
 https://www.linkedin.com/company/sigma-publishinq
