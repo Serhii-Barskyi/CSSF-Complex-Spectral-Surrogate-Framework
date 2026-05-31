@@ -105,8 +105,8 @@ pip install qiskit qiskit-aer pandapower pyomo highspy torch scipy tqdm
 ### Production Benchmark
 
 ```
-├── CSSF_Production_Benchmark.ipynb          # Main benchmark notebook
-├── CSSF_Production_Benchmark_merged.ipynb   # Extended (+ theorem verification blocks)
+├── CSSF_Production_Benchmark.ipynb          # Extended benchmark notebook (+ theorem verification blocks)
+
 ```
 
 ### Full CSSF Framework
