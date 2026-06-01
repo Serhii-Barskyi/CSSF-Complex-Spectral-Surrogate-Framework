@@ -4,9 +4,11 @@
 
 *By SigmaPublishinQ Team* · [LinkedIn](https://www.linkedin.com/company/sigma-publishinq)
 
+📖 **Full Framework Description:** https://www.kaggle.com/code/serhiibarskyi/aizenberg-technologies-for-optimal-bess-placement
+
 ---
 
-CSSF is a hybrid classical-quantum framework for optimal placement of Battery Energy Storage Systems (BESS) in power grids. At its core is the **CSNN-T** surrogate (Complex Spectral Neural Network — Tikhonov), which replaces expensive AC OPF computations with a Fourier spectral approximation. QAOA parameters are predicted via the **CSNN-T^QAOA** surrogate, while the BESS placement problem is formulated as a QUBO and solved using the original **LSF-weighted mixer**. The framework achieves speedups from **3.6M×** to **8.0M×** over AC scanning, with ranking quality exceeding the industry-standard Sensitivity Ranking across all IEEE test systems.
+CSSF is a hybrid classical-quantum framework for optimal placement of Battery Energy Storage Systems (BESS) in power grids. At its core is the **CSNN-T** surrogate (Complex Spectral Neural Network on the Torus), a Tikhonov-regularized regression on the toric basis of the AC power flow manifold **𝕋^{n−1}**, replacing expensive AC OPF computations with an analytic spectral approximation. QAOA parameters are predicted via the **CSNN-T^QAOA** surrogate, while the BESS placement problem is formulated as a QUBO and solved using the original **LSF-weighted mixer**. The framework achieves speedups from **4.6M×** to **8.1M×** over AC scanning, with ranking quality exceeding the industry-standard Sensitivity Ranking across all IEEE test systems.
 
 ---
 
@@ -26,7 +28,7 @@ A scalable multi-system platform with modular architecture, GPU support, Bayesia
 
 ## 📊 Key Features
 
-- **Spectral surrogate modeling:** CSNN-T replaces AC OPF via Fourier decomposition of the QAOA energy landscape
+- **Spectral surrogate modeling:** CSNN-T fits a Tikhonov-regularized model in the toric Fourier basis of the AC power flow manifold, capturing the analytic structure of LSF via edge harmonics {±e_ij}
 - **Quantum optimization:** QUBO + QAOA with the original LSF-weighted mixer
 - **Strict OOD regime:** testing on load scenarios U(1.32, 1.50) — zero overlap with training peak U(1.10, 1.30)
 - **Multi-system benchmarking:** IEEE 14, 30, 57, 118-bus with N-1 contingency
@@ -41,7 +43,7 @@ A scalable multi-system platform with modular architecture, GPU support, Bayesia
 - **CSNN-T:** complex spectral neural network (Tikhonov regularization, GCV λ selection)
 - **QAOA LSF-mixer:** original LSF-weighted mixer (`H_M = Σᵢ LSF_i · Xᵢ`, gate `Rₓ(2·β·LSFᵢ)`)
 - **QUBO / Ising transform:** automatic assembly of the BESS placement problem
-- **GP+EI Bayesian Opt:** Gaussian surrogate optimization of QAOA parameters (M₀=60 circuit evaluations)
+- **GP+EI Bayesian Opt:** Gaussian surrogate optimization of QAOA parameters (M₀=50 circuit evaluations)
 - **Qiskit / IBM Heron r2:** quantum execution (Phase 3, K=20, depth=210, shots=8192)
 - **PyPower / Pandapower:** AC/DC OPF computations and training data generation
 - **Pyomo + HiGHS:** MILP DC power flow (DOE-recommended baseline)
@@ -92,11 +94,11 @@ pip install qiskit qiskit-aer pandapower pyomo highspy torch scipy tqdm
 ### Expected Results
 
 | System | Kendall τ (CSSF) | Kendall τ (SR) | Δ | Speedup vs AC Scan |
-|--------|-----------------|----------------|---|--------------------|
-| IEEE 14-bus | **0.8974** | 0.8718 | +0.026 | **3.6M×** |
-| IEEE 30-bus | **1.0000** | 0.8374 | +0.163 | **8.0M×** |
-| IEEE 57-bus | **0.9714** | 0.8844 | +0.087 | **5.3M×** |
-| IEEE 118-bus | **0.9870** | 0.7607 | +0.226 | **4.7M×** |
+|--------|-----------------|----------------|---|---------------------|
+| IEEE 14-bus | **0.974** | 0.872 | +0.103 | **4.6M×** |
+| IEEE 30-bus | **0.990** | 0.862 | +0.128 | **7.2M×** |
+| IEEE 57-bus | **0.995** | 0.897 | +0.097 | **8.1M×** |
+| IEEE 118-bus | **0.987** | 0.761 | +0.226 | **4.7M×** |
 
 ---
 
@@ -134,13 +136,13 @@ cssf/
 ## 📈 Performance Metrics
 
 | Metric | CSSF | SR (Sensitivity Ranking) | MILP DC |
-|--------|------|--------------------------|---------|
-| Kendall τ — IEEE 14-bus | **0.897** | 0.872 | — |
-| Kendall τ — IEEE 30-bus | **1.000** | 0.837 | — |
-| Kendall τ — IEEE 57-bus | **0.971** | 0.884 | — |
+|--------|------|--------------------------|---------| 
+| Kendall τ — IEEE 14-bus | **0.974** | 0.872 | — |
+| Kendall τ — IEEE 30-bus | **0.990** | 0.862 | — |
+| Kendall τ — IEEE 57-bus | **0.995** | 0.897 | — |
 | Kendall τ — IEEE 118-bus | **0.987** | 0.761 | — |
 | ρ CSNN-T surrogate (mean) | **0.999** | — | 0.35–0.68 |
-| Speedup vs AC scan | **3.6M–8.0M×** | — | — |
+| Speedup vs AC scan | **4.6M–8.1M×** | — | — |
 | CSNN-T^QAOA vs grid search | **36× fewer evals** | — | — |
 | Multi-scenario coverage | **5 scenario types** | 1 nominal | — |
 
@@ -199,7 +201,7 @@ After running `CSSF_Production_Benchmark.ipynb`, the notebook output will displa
 
 ### CSNN-T Surrogate (OPF)
 
-- Complex spectral approximation of AC power flow distribution
+- Complex spectral approximation of AC power flow distribution on the toric manifold **𝕋^{n−1}**
 - Tikhonov regularization with GCV λ selection (optimal: λ=10⁻¹²)
 - Matrix ranks: 35 (case14) → 138 (case57)
 - Stability margins: 124–210
@@ -209,18 +211,20 @@ After running `CSSF_Production_Benchmark.ipynb`, the notebook output will displa
 - Physically motivated mixer: `H_M = Σᵢ LSF_i · Xᵢ`
 - Gate: `Rₓ(2·β·LSFᵢ)` — adaptive rotation by bus sensitivity
 - Achieves deeper exploration of the optimization landscape compared to uniform mixing
+- LSF-mixer converges in mean **55.7 COBYLA iterations** vs. 89.8 for uniform mixer (1.61× speedup), both reaching r = 1.000
 
 ### Theorem 3: Spectral Structure of the QAOA Landscape
 
 - `E(γ,β) = Σ_{k∈Λ_p} f̂(k)·e^{ik·(γ,β)}`
-- |Λ_p|=25 frequencies at p=1, k_max=3
+- |Λ_p|=25/129/377 frequencies at p=1/2/3, k_max=3
+- LSF-weighted mixer expands β-frequency support to **|W₁| = 2K²+2K+1 = 365** vs. 5 for uniform mixer (**73× richer**)
 - CSNN-T^QAOA surrogate operates in Fourier space
 
 ### GP+EI Bayesian Optimization
 
 - GP prior: CSNN-T^QAOA surrogate
 - Expected Improvement acquisition function
-- M₀=60 circuit evaluations — **36× more efficient** than grid search at K=20
+- M₀=50 circuit evaluations — **36× more efficient** than grid search at p=1
 
 ---
 
@@ -267,7 +271,7 @@ We welcome contributions! Please see our contributing guidelines for:
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the LICENSE file for details.
+This project is licensed under the Apache License 2.0 — see the LICENSE file for details.
 
 ---
 
