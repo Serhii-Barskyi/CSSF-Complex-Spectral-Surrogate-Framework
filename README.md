@@ -61,8 +61,14 @@ A scalable multi-system platform with modular architecture, GPU support, Bayesia
 ### Dependencies
 
 ```bash
-pip install qiskit qiskit-aer pandapower pypower pyomo highspy \
-            torch networkx scipy numpy pandas tqdm
+# Quantum
+pip('qiskit==1.2.4', 'qiskit-aer-gpu==0.14.2')
+# Power-systems
+pip('pandapower==3.4.0', 'numba')
+# Classical MILP solver (DOE-listed: HiGHS)
+pip('pyomo>=6.4.2', 'highspy')
+# ML / optimisation
+pip('scikit-learn', 'scipy')
 ```
 
 ---
@@ -75,14 +81,9 @@ pip install qiskit qiskit-aer pandapower pypower pyomo highspy \
 
 ```bash
 # In Google Colab
-# Copy to: /content/drive/MyDrive/CSSF_Framework/
+# Copy to: /content/drive/MyDrive/cssf/
 ```
 
-**Install Dependencies**
-
-```bash
-pip install qiskit qiskit-aer pandapower pyomo highspy torch scipy tqdm
-```
 
 **Run the Benchmark**
 
